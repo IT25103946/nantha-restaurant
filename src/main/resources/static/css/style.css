@@ -1,0 +1,979 @@
+/* ============================================================
+   Nantha Restaurant · POS Billing System Stylesheet
+   ============================================================ */
+
+:root {
+    --bg: #f6f3ed;
+    --surface: #ffffff;
+    --ink: #1a1714;
+    --ink-secondary: #524c43;
+    --muted: #827b70;
+    --line: #e4dfd5;
+    --line-soft: #ede9e1;
+    --brand: #8a2525;
+    --brand-dark: #6e1c1c;
+    --brand-light: #fbeeed;
+    --accent: #d97706;
+    --accent-light: #fef3c7;
+    --accent-subtle: #fffbeb;
+    --danger: #b91c1c;
+    --danger-bg: #fee2e2;
+    --ok: #15803d;
+    --ok-bg: #dcfce7;
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    --shadow-sm: 0 2px 6px rgba(26, 23, 20, 0.04);
+    --shadow-md: 0 8px 24px rgba(26, 23, 20, 0.08);
+    --shadow-lg: 0 16px 36px rgba(26, 23, 20, 0.14);
+    --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, p {
+    margin: 0;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---------------- Header ---------------- */
+
+.app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 28px;
+    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(110, 28, 28, 0.35);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.brand-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--brand-dark);
+    background: #f59e0b;
+    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.brand-text h1 {
+    font-size: 20px;
+    letter-spacing: 0.3px;
+    font-weight: 700;
+}
+
+.brand-text p {
+    margin-top: 2px;
+    font-size: 11.5px;
+    opacity: 0.82;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+}
+
+.header-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 13px;
+}
+
+.clock {
+    font-family: var(--mono);
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-weight: 600;
+}
+
+.cashier {
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+/* ---------------- Layout ---------------- */
+
+.layout {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(370px, 1fr);
+    gap: 22px;
+    padding: 22px 28px;
+    align-items: start;
+    max-width: 1440px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 22px;
+}
+
+.panel-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.panel-head h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+}
+
+.panel-sub {
+    margin-top: 3px;
+    font-size: 12.5px;
+    color: var(--muted);
+}
+
+.search-box {
+    font: inherit;
+    font-size: 13.5px;
+    padding: 9px 16px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: #faf8f5;
+    color: var(--ink);
+    width: 220px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.search-box:focus {
+    background: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light);
+}
+
+/* ---------------- Food Grid & Cards ---------------- */
+
+.food-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+}
+
+.food-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    text-align: left;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    user-select: none;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.food-card:hover {
+    transform: translateY(-4px);
+    border-color: #e5cdb0;
+    box-shadow: var(--shadow-lg);
+}
+
+.food-card:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.food-card:active {
+    transform: translateY(-1px) scale(0.99);
+}
+
+.food-card.is-popped {
+    animation: cardPop 0.3s ease;
+}
+
+@keyframes cardPop {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(0.95); box-shadow: 0 0 0 4px var(--accent-light); }
+    100% { transform: scale(1); }
+}
+
+.food-card__media {
+    position: relative;
+    display: block;
+    height: 135px;
+    background: linear-gradient(135deg, #3d2b24, #6e2020);
+    overflow: hidden;
+}
+
+.food-card__emoji {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 44px;
+    opacity: 0.9;
+    z-index: 1;
+}
+
+.food-card__img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+}
+
+.food-card__img--local {
+    z-index: 2;
+}
+
+.food-card__img--remote {
+    z-index: 3;
+}
+
+.food-card:hover .food-card__img {
+    transform: scale(1.08);
+}
+
+.food-card__badge-add,
+.food-card__badge-options {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    z-index: 4;
+    transition: background 0.15s, color 0.15s;
+}
+
+.food-card__badge-add {
+    background: rgba(255, 255, 255, 0.94);
+    color: var(--brand);
+}
+
+.food-card:hover .food-card__badge-add {
+    background: var(--brand);
+    color: #fff;
+}
+
+.food-card__badge-options {
+    background: rgba(217, 119, 6, 0.92);
+    color: #fff;
+}
+
+.food-card__body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+    padding: 12px;
+    gap: 8px;
+    background: #fff;
+}
+
+.food-card__info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.food-card__title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.food-card__name {
+    font-size: 14.5px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--ink);
+}
+
+.food-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.food-card__price {
+    font-family: var(--mono);
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--brand);
+}
+
+.food-card__group-sub {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+.in-cart-badge {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ok);
+    background: var(--ok-bg);
+    border: 1px solid #bbf7d0;
+    border-radius: 999px;
+    padding: 2px 7px;
+    white-space: nowrap;
+}
+
+/* ---------------- Chicken Briyani Variant Buttons ---------------- */
+
+.variant-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.variant-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 8px 6px;
+    border-radius: 8px;
+    border: 1px solid #f2cf97;
+    background: var(--accent-subtle);
+    color: #92400e;
+    cursor: pointer;
+    line-height: 1.2;
+    transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.08s;
+}
+
+.variant-btn:hover {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.variant-btn:active {
+    transform: translateY(1px);
+}
+
+.variant-btn__label {
+    white-space: nowrap;
+}
+
+.variant-btn__qty {
+    font-size: 10px;
+    opacity: 0.9;
+    font-weight: 800;
+}
+
+/* ---------------- Modal Dialog ---------------- */
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(18, 14, 11, 0.65);
+    backdrop-filter: blur(5px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: fadeIn 0.18s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-card {
+    background: #fff;
+    border-radius: 20px;
+    max-width: 440px;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+    animation: modalSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalSlideUp {
+    from { transform: translateY(20px) scale(0.96); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--ink);
+    font-size: 22px;
+    line-height: 1;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: background 0.15s, color 0.15s;
+}
+
+.modal-close:hover {
+    background: var(--brand);
+    color: #fff;
+}
+
+.modal-media {
+    position: relative;
+    height: 170px;
+    background: linear-gradient(135deg, #3d2b24, #6e2020);
+    overflow: hidden;
+}
+
+.modal-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.modal-body {
+    padding: 20px 22px 24px;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--ink);
+}
+
+.modal-desc {
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.modal-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.btn-modal-portion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid #f3d6ac;
+    background: #fdfbf7;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+
+.btn-modal-portion:hover {
+    border-color: var(--brand);
+    background: var(--brand-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-modal-portion__left {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.btn-modal-portion__name {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--ink);
+}
+
+.btn-modal-portion__price {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--brand);
+}
+
+.btn-modal-portion__action {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.btn-modal-portion__cta {
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--brand);
+    color: #fff;
+    white-space: nowrap;
+}
+
+.btn-modal-portion:hover .btn-modal-portion__cta {
+    background: var(--brand-dark);
+}
+
+.btn-modal-portion__badge {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ok);
+}
+
+/* ---------------- Bill Panel ---------------- */
+
+.bill-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.bill-head {
+    text-align: center;
+}
+
+.bill-title {
+    font-size: 22px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--brand);
+    font-weight: 800;
+}
+
+.bill-address {
+    margin-top: 3px;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.bill-meta {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    text-align: left;
+    background: #faf8f5;
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+}
+
+.meta-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.meta-row span {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+}
+
+.meta-row strong {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink);
+}
+
+.bill-divider {
+    height: 1px;
+    background: var(--line);
+    margin: 16px 0;
+}
+
+.bill-divider--dashed {
+    height: 0;
+    background: none;
+    border-top: 2px dashed var(--line);
+}
+
+.table-wrap {
+    overflow-x: auto;
+    max-height: 380px;
+}
+
+.bill-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.bill-table th {
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    padding: 9px 10px;
+    border-bottom: 2px solid var(--line);
+}
+
+.bill-table td {
+    padding: 11px 10px;
+    border-bottom: 1px solid var(--line-soft);
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.bill-table .c-name {
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.bill-table .c-rate,
+.bill-table .c-amount {
+    font-family: var(--mono);
+}
+
+.bill-table .c-amount {
+    font-weight: 700;
+    color: var(--brand);
+}
+
+.qty-col {
+    width: 114px;
+    text-align: center;
+}
+
+.remove-col {
+    width: 36px;
+    text-align: center;
+}
+
+.c-qty {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.qty-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.qty-btn:hover {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: #fff;
+}
+
+.qty-value {
+    display: inline-block;
+    min-width: 28px;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.remove-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background: var(--danger-bg);
+    color: var(--danger);
+    font-size: 15px;
+    line-height: 1;
+    display: inline-grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+}
+
+.remove-btn:hover {
+    background: var(--danger);
+    color: #fff;
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13.5px;
+    padding: 28px 14px;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-md);
+    background: #faf8f5;
+    margin: 12px 0;
+}
+
+.empty-state--error {
+    color: var(--danger);
+    border-color: #fca5a5;
+    background: var(--danger-bg);
+}
+
+/* ---------------- Totals ---------------- */
+
+.totals {
+    margin-top: 14px;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13.5px;
+    color: var(--ink-secondary);
+    padding: 6px 2px;
+}
+
+.total-row--grand {
+    margin-top: 6px;
+    padding: 13px 16px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #fff;
+    border-radius: var(--radius-md);
+    font-size: 16px;
+    font-weight: 800;
+    box-shadow: 0 6px 16px rgba(138, 37, 37, 0.3);
+}
+
+#grand-total {
+    font-family: var(--mono);
+    font-size: 18px;
+}
+
+.bill-thanks {
+    text-align: center;
+}
+
+.bill-thanks p {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--brand);
+}
+
+.bill-note {
+    font-weight: 400 !important;
+    font-size: 11.5px !important;
+    color: var(--muted) !important;
+    margin-top: 3px !important;
+}
+
+.bill-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.btn {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    border-radius: 10px;
+    padding: 11px 18px;
+    cursor: pointer;
+    transition: transform 0.08s, box-shadow 0.15s, background 0.15s;
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn-primary {
+    flex: 1;
+    background: var(--brand);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(138, 37, 37, 0.28);
+}
+
+.btn-primary:hover {
+    background: var(--brand-dark);
+}
+
+.btn-ghost {
+    background: #fff;
+    color: var(--muted);
+    border: 1px solid var(--line);
+}
+
+.btn-ghost:hover {
+    color: var(--danger);
+    border-color: #fca5a5;
+    background: var(--danger-bg);
+}
+
+/* ---------------- Footer ---------------- */
+
+.app-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 28px;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--line);
+    background: #efeae1;
+}
+
+/* ---------------- Responsive ---------------- */
+
+@media (max-width: 980px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+    .search-box {
+        width: 160px;
+    }
+    .app-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+/* ============================================================
+   PRINT MEDIA · Clean Bill Invoice
+   ============================================================ */
+
+@media print {
+    @page {
+        size: auto;
+        margin: 10mm;
+    }
+
+    body {
+        background: #fff !important;
+        display: block;
+        min-height: auto;
+        color: #000 !important;
+    }
+
+    .no-print,
+    .app-header,
+    .app-footer,
+    .menu-panel,
+    .bill-actions,
+    .qty-btn,
+    .remove-btn,
+    .modal-backdrop {
+        display: none !important;
+    }
+
+    .layout {
+        display: block;
+        padding: 0;
+        max-width: none;
+        margin: 0;
+    }
+
+    .bill-panel {
+        width: 100%;
+        max-width: 480px;
+        margin: 0 auto;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0;
+        background: #fff;
+    }
+
+    .table-wrap {
+        max-height: none;
+        overflow: visible;
+    }
+
+    .bill-table .c-qty {
+        text-align: center;
+    }
+
+    .bill-table td,
+    .bill-table th {
+        padding: 8px 6px;
+        border-color: #ccc;
+    }
+
+    .total-row--grand {
+        background: none !important;
+        color: #000 !important;
+        border: 2px solid #000;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    #grand-total {
+        font-size: 17px;
+        color: #000 !important;
+    }
+
+    .bill-meta {
+        background: none;
+        border-color: #999;
+    }
+
+    .bill-thanks {
+        margin-top: 14px;
+    }
+}

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <title>Nantha Restaurant - Billing System</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f6f9; }
+        h1 { color: #2c3e50; text-align: center; }
+        .container { display: flex; gap: 20px; }
+        .menu-section { flex: 2; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .bill-section { flex: 1; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+        /* Food Grid Layout */
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top: 15px; }
+        .food-card { border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px; text-align: center; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: transform 0.2s; }
+        .food-card:hover { transform: translateY(-3px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .food-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 6px; }
+        .food-card h4 { margin: 10px 0 5px; font-size: 15px; color: #333; }
+        .food-card p { margin: 0 0 10px; color: #666; font-weight: bold; }
+
+        .btn-add { background-color: #28a745; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; width: 100%; }
+        .btn-add:hover { background-color: #218838; }
+
+        .biryani-buttons { display: flex; gap: 5px; }
+        .btn-size { background-color: #ffc107; color: #000; border: none; padding: 5px; font-size: 11px; cursor: pointer; border-radius: 4px; font-weight: bold; flex: 1; }
+        .btn-size:hover { background-color: #e0a800; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #e0e0e0; padding: 8px; text-align: left; font-size: 14px; }
+        th { background-color: #f8f9fa; }
+        .btn-qty { background-color: #007bff; color: white; border: none; padding: 2px 6px; cursor: pointer; border-radius: 3px; }
+        .btn-danger { background-color: #dc3545; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 3px; }
+        .print-btn { background-color: #17a2b8; color: white; border: none; width: 100%; padding: 12px; font-size: 16px; margin-top: 20px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .total-box { font-size: 18px; font-weight: bold; margin-top: 20px; text-align: right; color: #2c3e50; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #bill-print-area, #bill-print-area * { visibility: visible; }
+            #bill-print-area { position: absolute; left: 0; top: 0; width: 100%; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<h1>Nantha Restaurant - Billing System</h1>
+
+<div class="container">
+    <!-- Menu Grid -->
+    <div class="menu-section">
+        <h3>Menu Items</h3>
+        <div class="menu-grid" id="menu-grid">
+            <!-- JavaScript Cards -->
+        </div>
+    </div>
+
+    <!-- Bill Invoice Section -->
+    <div class="bill-section" id="bill-print-area">
+        <h3>Nantha Restaurant</h3>
+        <hr>
+        <table>
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Price</th>
+                <th>Qty</th>
+                <th>Total</th>
+                <th class="no-print">Act</th>
+            </tr>
+            </thead>
+            <tbody id="cart-list">
+            <!-- Cart items -->
+            </tbody>
+        </table>
+
+        <div class="total-box">
+            Grand Total: LKR <span id="grand-total">0.00</span>
+        </div>
+
+        <button class="print-btn no-print" onclick="window.print()">Print Bill</button>
+    </div>
+</div>
+
+<script>
+    // நீங்கள் குறிப்பிட்ட புதிய Pinterest மற்றும் பொருத்தமான பட இணைப்புகளுடன் கூடிய மெனு பட்டியல்
+    const menuItems = [
+        { id: 1, name: "Barotta", price: 50.00, image: "https://i.pinimg.com/1200x/5a/9e/03/5a9e03a9b0689a14ec5290c9beab76a9.jpg" },
+        { id: 2, name: "Noodles", price: 150.00, image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400" },
+        { id: 3, name: "Milk Tea", price: 120.00, image: "https://i.pinimg.com/736x/29/d8/22/29d8223b4b67aa89997e1e2d01fc4c56.jpg" },
+        { id: 4, name: "Ulunthu Vada", price: 80.00, image: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=400" },
+        { id: 5, name: "Poori", price: 100.00, image: "https://i.pinimg.com/736x/95/c5/8a/95c58a20486f96a9ea1ae25f692e9ef5.jpg" },
+        { id: 6, name: "Chicken Briyani", price: 600.00, image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400", isBiryani: true },
+        { id: 7, name: "Idly", price: 40.00, image: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=400" },
+        { id: 8, name: "Dhosa", price: 80.00, image: "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=400" },
+        { id: 9, name: "Samosa", price: 60.00, image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400" }
+    ];
+
+    let cart = [];
+
+    function renderMenu() {
+        let menuGrid = document.getElementById('menu-grid');
+        menuGrid.innerHTML = '';
+
+        menuItems.forEach(item => {
+            let actionHTML = '';
+            if (item.isBiryani) {
+                actionHTML = `
+                        <div class="biryani-buttons">
+                            <button class="btn-size" onclick="addToCartByName('Chicken Briyani (Normal)', 600)">Normal</button>
+                            <button class="btn-size" onclick="addToCartByName('Chicken Briyani (Large)', 800)">Large</button>
+                        </div>
+                    `;
+            } else {
+                actionHTML = `<button class="btn-add" onclick="addToCart(${item.id})">Add</button>`;
+            }
+
+            menuGrid.innerHTML += `
+                    <div class="food-card">
+                        <img src="${item.image}" alt="${item.name}">
+                        <h4>${item.name}</h4>
+                        <p>LKR ${item.price.toFixed(2)}</p>
+                        ${actionHTML}
+                    </div>
+                `;
+        });
+    }
+
+    function addToCart(id) {
+        let item = menuItems.find(i => i.id === id);
+        let cartItem = cart.find(i => i.id === id);
+
+        if (cartItem) {
+            cartItem.quantity += 1;
+        } else {
+            cart.push({ id: item.id, name: item.name, price: item.price, quantity: 1 });
+        }
+        renderCart();
+    }
+
+    function addToCartByName(name, price) {
+        let cartItem = cart.find(i => i.name === name);
+
+        if (cartItem) {
+            cartItem.quantity += 1;
+        } else {
+            cart.push({ id: name, name: name, price: price, quantity: 1 });
+        }
+        renderCart();
+    }
+
+    function updateQuantity(id, change) {
+        let cartItem = cart.find(i => i.id === id);
+        if (cartItem) {
+            cartItem.quantity += change;
+            if (cartItem.quantity <= 0) {
+                removeFromCart(id);
+            } else {
+                renderCart();
+            }
+        }
+    }
+
+    function removeFromCart(id) {
+        cart = cart.filter(i => i.id !== id);
+        renderCart();
+    }
+
+    function renderCart() {
+        let cartTable = document.getElementById('cart-list');
+        cartTable.innerHTML = '';
+        let grandTotal = 0;
+
+        cart.forEach(item => {
+            let itemTotal = item.price * item.quantity;
+            grandTotal += itemTotal;
+
+            cartTable.innerHTML += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.price.toFixed(2)}</td>
+                        <td>
+                            <button class="btn-qty no-print" onclick="updateQuantity('${item.id}', -1)">-</button>
+                            ${item.quantity}
+                            <button class="btn-qty no-print" onclick="updateQuantity('${item.id}', 1)">+</button>
+                        </td>
+                        <td>${itemTotal.toFixed(2)}</td>
+                        <td class="no-print"><button class="btn-danger" onclick="removeFromCart('${item.id}')">X</button></td>
+                    </tr>
+                `;
+        });
+
+        document.getElementById('grand-total').innerText = grandTotal.toFixed(2);
+    }
+
+    window.onload = renderMenu;
+</script>
+</body>
+</html>
